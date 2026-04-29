@@ -1,0 +1,19 @@
+name: Deploy API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/api/**'
+      - 'ops/coolify/api.dockerfile'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trigger Coolify deploy
+        run: |
+          curl -X POST "${{ secrets.COOLIFY_WEBHOOK_API }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"

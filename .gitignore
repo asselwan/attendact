@@ -1,0 +1,16 @@
+node_modules/
+__pycache__/
+.env*
+!.env.example
+ml/data/
+ml/artifacts/
+*.pkl
+.DS_Store
+dist/
+build/
+.venv/
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+vite.config.ts.timestamp*

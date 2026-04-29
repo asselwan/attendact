@@ -1,0 +1,20 @@
+name: Deploy Web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'ops/coolify/web.dockerfile'
+      - 'ops/coolify/Caddyfile'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trigger Coolify deploy
+        run: |
+          curl -X POST "${{ secrets.COOLIFY_WEBHOOK_WEB }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"

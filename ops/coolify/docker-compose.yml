@@ -1,0 +1,18 @@
+services:
+  api:
+    build:
+      context: ../..
+      dockerfile: ops/coolify/api.dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../../.env
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ../..
+      dockerfile: ops/coolify/web.dockerfile
+    ports:
+      - "3000:80"
+    restart: unless-stopped
