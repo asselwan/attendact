@@ -1,5 +1,7 @@
 """Hijri calendar, Ramadan, Eid, and UAE heat helpers."""
 
+from __future__ import annotations
+
 from datetime import date, datetime
 
 from hijri_converter import Hijri, Gregorian

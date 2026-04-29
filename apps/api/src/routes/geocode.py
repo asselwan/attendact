@@ -1,5 +1,7 @@
 """Geocoding and autocomplete routes. Ported from FuelQ location assets."""
 
+from __future__ import annotations
+
 import os
 from math import atan2, cos, pi, sin, sqrt
 

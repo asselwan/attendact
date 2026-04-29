@@ -1,5 +1,7 @@
 """UAE-specific feature engineering for no-show prediction."""
 
+from __future__ import annotations
+
 import math
 from datetime import datetime
 
