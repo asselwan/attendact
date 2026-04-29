@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from ..ml.features import compute_features
 from ..ml.heuristic import HeuristicScorer
 from ..ml.explain import explain_score
-from .geocode import geocode_area, haversine_km
+from ..ml.locations import compute_distance
 
 router = APIRouter()
 
@@ -43,20 +43,10 @@ class ScoreResult(BaseModel):
 async def score_single(appointment: AppointmentInput):
     raw = appointment.model_dump()
 
-    # Compute distance from area names if both provided
-    distance_km = None
-    if appointment.clinic_area and appointment.patient_area:
-        clinic_coords = await geocode_area(appointment.clinic_area)
-        patient_coords = await geocode_area(appointment.patient_area)
-        if clinic_coords and patient_coords:
-            distance_km = round(
-                haversine_km(
-                    patient_coords[0], patient_coords[1],
-                    clinic_coords[0], clinic_coords[1],
-                ),
-                1,
-            )
-            raw["distance_km"] = distance_km
+    # Compute distance from fixed clinic/area coordinate lookup
+    distance_km = compute_distance(appointment.clinic_area, appointment.patient_area)
+    if distance_km is not None:
+        raw["distance_km"] = distance_km
 
     features = compute_features(raw)
     scorer = HeuristicScorer()

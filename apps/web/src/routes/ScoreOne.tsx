@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { scoreSingle, type AppointmentInput, type ScoreResult } from '../lib/api'
 import { RiskBadge } from '../components/RiskBadge'
 import { ExplanationCard } from '../components/ExplanationCard'
@@ -19,6 +19,87 @@ const SPECIALTIES = [
   { value: 'psychiatry', label: 'Psychiatry' },
   { value: 'pulmonology', label: 'Pulmonology' },
   { value: 'urology', label: 'Urology' },
+]
+
+const CLINICS = [
+  { value: 'SSMC', label: 'Sheikh Shakhbout Medical City' },
+  { value: 'CCAD', label: 'Cleveland Clinic Abu Dhabi' },
+  { value: 'TAWAM', label: 'Tawam Hospital' },
+  { value: 'MAFRAQ', label: 'Mafraq Hospital' },
+  { value: 'ALAIN', label: 'Al Ain Hospital' },
+  { value: 'CORNICHE', label: 'Corniche Hospital' },
+  { value: 'HEALTHPOINT', label: 'Healthpoint' },
+  { value: 'NMC', label: 'NMC Royal Hospital' },
+  { value: 'BURJEEL_AD', label: 'Burjeel Hospital Abu Dhabi' },
+  { value: 'BURJEEL_DXB', label: 'Burjeel Hospital Dubai' },
+  { value: 'MEDICLINIC', label: 'Mediclinic' },
+  { value: 'DANAT', label: 'Danat Al Emarat' },
+  { value: 'RASHID', label: 'Rashid Hospital' },
+  { value: 'DUBAI_HOSP', label: 'Dubai Hospital' },
+  { value: 'AMERICAN_DXB', label: 'American Hospital Dubai' },
+  { value: 'ASTER', label: 'Aster Hospital' },
+  { value: 'ALZAHRA', label: 'Al Zahra Hospital Sharjah' },
+  { value: 'UHS', label: 'University Hospital Sharjah' },
+]
+
+const PATIENT_AREAS = [
+  { group: 'Abu Dhabi City', options: [
+    { value: 'al_maryah_island', label: 'Al Maryah Island' },
+    { value: 'al_reem_island', label: 'Al Reem Island' },
+    { value: 'saadiyat_island', label: 'Saadiyat Island' },
+    { value: 'yas_island', label: 'Yas Island' },
+    { value: 'al_bateen', label: 'Al Bateen' },
+    { value: 'corniche', label: 'Corniche' },
+    { value: 'al_nahyan', label: 'Al Nahyan' },
+    { value: 'al_mushrif', label: 'Al Mushrif' },
+    { value: 'al_karamah', label: 'Al Karamah' },
+    { value: 'al_muroor', label: 'Al Muroor' },
+    { value: 'al_rawdah', label: 'Al Rawdah' },
+    { value: 'tourist_club', label: 'Tourist Club Area' },
+    { value: 'between_bridges', label: 'Between Two Bridges' },
+  ]},
+  { group: 'Abu Dhabi Suburbs', options: [
+    { value: 'khalifa_city', label: 'Khalifa City' },
+    { value: 'mbz_city', label: 'Mohammed Bin Zayed City' },
+    { value: 'mussafah', label: 'Mussafah' },
+    { value: 'al_shamkha', label: 'Al Shamkha' },
+    { value: 'al_reef', label: 'Al Reef' },
+    { value: 'baniyas', label: 'Baniyas' },
+    { value: 'al_wathba', label: 'Al Wathba' },
+    { value: 'shahama', label: 'Shahama' },
+    { value: 'al_rahba', label: 'Al Rahba' },
+    { value: 'al_falah', label: 'Al Falah' },
+  ]},
+  { group: 'Al Ain', options: [
+    { value: 'al_ain_centre', label: 'Al Ain City Centre' },
+    { value: 'al_jimi', label: 'Al Jimi' },
+    { value: 'al_muwaiji', label: 'Al Muwaiji' },
+    { value: 'al_khabisi', label: 'Al Khabisi' },
+    { value: 'hili', label: 'Hili' },
+    { value: 'zakher', label: 'Zakher' },
+  ]},
+  { group: 'Dubai', options: [
+    { value: 'bur_dubai', label: 'Bur Dubai' },
+    { value: 'deira', label: 'Deira' },
+    { value: 'downtown_dubai', label: 'Downtown Dubai' },
+    { value: 'dubai_marina', label: 'Dubai Marina' },
+    { value: 'jumeirah', label: 'Jumeirah' },
+    { value: 'al_barsha', label: 'Al Barsha' },
+    { value: 'international_city', label: 'International City' },
+    { value: 'silicon_oasis', label: 'Silicon Oasis' },
+  ]},
+  { group: 'Sharjah', options: [
+    { value: 'al_majaz', label: 'Al Majaz' },
+    { value: 'al_nahda_shj', label: 'Al Nahda' },
+    { value: 'al_taawun', label: 'Al Taawun' },
+    { value: 'al_khan', label: 'Al Khan' },
+  ]},
+  { group: 'Northern Emirates', options: [
+    { value: 'ajman', label: 'Ajman' },
+    { value: 'rak', label: 'Ras Al Khaimah' },
+    { value: 'fujairah', label: 'Fujairah' },
+    { value: 'uaq', label: 'Umm Al Quwain' },
+  ]},
 ]
 
 const EMIRATES = [
@@ -130,8 +211,8 @@ export function ScoreOne() {
           <fieldset className="space-y-3">
             <legend className="text-xs font-medium text-gold mb-2 uppercase tracking-wide">Location</legend>
             <div className="grid grid-cols-2 gap-3">
-              <AutocompleteField label="Clinic Area" name="clinic_area" placeholder="e.g. Al Maryah Island" />
-              <AutocompleteField label="Patient Area" name="patient_area" placeholder="e.g. Mussafah" />
+              <Select label="Clinic" name="clinic_area" options={CLINICS} />
+              <GroupedSelect label="Patient Area" name="patient_area" groups={PATIENT_AREAS} />
             </div>
           </fieldset>
 
@@ -230,52 +311,27 @@ function Select({ label, name, options }: { label: string; name: string; options
   )
 }
 
-function AutocompleteField({ label, name, placeholder }: { label: string; name: string; placeholder: string }) {
-  const [query, setQuery] = useState('')
-  const [suggestions, setSuggestions] = useState<Array<{ description: string; place_id: string }>>([])
-  const [open, setOpen] = useState(false)
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
-
-  useEffect(() => {
-    if (query.length < 2) { setSuggestions([]); return }
-    clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const res = await fetch(`/api/autocomplete?q=${encodeURIComponent(query + ' UAE')}`)
-        const data = await res.json()
-        setSuggestions(data.predictions || [])
-        setOpen(true)
-      } catch { setSuggestions([]) }
-    }, 300)
-    return () => clearTimeout(debounceRef.current)
-  }, [query])
-
+function GroupedSelect({ label, name, groups }: {
+  label: string
+  name: string
+  groups: Array<{ group: string; options: Array<{ value: string; label: string }> }>
+}) {
   return (
-    <label className="block relative">
+    <label className="block">
       <span className="text-xs text-text-secondary">{label}</span>
-      <input
+      <select
         name={name}
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onFocus={() => suggestions.length > 0 && setOpen(true)}
-        onBlur={() => setTimeout(() => setOpen(false), 200)}
-        placeholder={placeholder}
-        autoComplete="off"
         className="mt-0.5 w-full bg-surface-raised border border-white/10 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
-      />
-      {open && suggestions.length > 0 && (
-        <ul className="absolute z-10 mt-1 w-full bg-surface-raised border border-white/10 rounded shadow-lg max-h-40 overflow-y-auto">
-          {suggestions.map((s) => (
-            <li
-              key={s.place_id}
-              onMouseDown={() => { setQuery(s.description); setOpen(false) }}
-              className="px-3 py-2 text-xs text-text-primary hover:bg-gold/10 cursor-pointer"
-            >
-              {s.description}
-            </li>
-          ))}
-        </ul>
-      )}
+      >
+        <option value="">Select area</option>
+        {groups.map((g) => (
+          <optgroup key={g.group} label={g.group}>
+            {g.options.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </optgroup>
+        ))}
+      </select>
     </label>
   )
 }
