@@ -67,8 +67,9 @@ async def score_single(appointment: AppointmentInput):
         distance_km=distance_km,
     )
 
-    # Append to in-memory store for insights aggregation
+    # Append to in-memory store for insights and outcome tracking
     score_store.append(ScoredAppointment(
+        appointment_id=result.appointment_id,
         scored_at=datetime.utcnow(),
         specialty=appointment.specialty,
         clinic_area=appointment.clinic_area or "",
@@ -81,7 +82,10 @@ async def score_single(appointment: AppointmentInput):
         insurance_tier=appointment.insurance_tier,
         booking_channel=appointment.booking_channel,
         patient_age_band=appointment.patient_age_band,
+        patient_gender=appointment.patient_gender,
+        language_pref=appointment.language_pref,
         time_of_day_band=features.get("time_of_day_band", "morning"),
+        is_ramadan=features.get("is_ramadan", False),
         top_factors=factors,
     ))
 

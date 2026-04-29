@@ -6,6 +6,7 @@ import { Layout } from './components/Layout'
 import { ScoreOne } from './routes/ScoreOne'
 import { ScoreBulk } from './routes/ScoreBulk'
 import { Dashboard } from './routes/Dashboard'
+import { Review } from './routes/Review'
 import { Insights } from './routes/Insights'
 import { Audit } from './routes/Audit'
 
@@ -18,6 +19,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/score" element={<ScoreOne />} />
           <Route path="/bulk" element={<ScoreBulk />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/review" element={<Review />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/audit" element={<Audit />} />
         </Route>
