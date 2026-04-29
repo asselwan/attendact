@@ -1,19 +1,14 @@
-name: Deploy API
+name: Deploy Noshight
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'apps/api/**'
-      - 'ops/coolify/api.dockerfile'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
       - name: Trigger Coolify deploy
         run: |
-          curl -X POST "${{ secrets.COOLIFY_WEBHOOK_API }}" \
+          curl -X POST "https://coolify.nomoi.ai/api/v1/deploy?uuid=tfggmpvlo6hldl76ntrnzueg" \
             -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
