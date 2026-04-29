@@ -12,13 +12,15 @@ export interface ScoreResult {
   }>
   model_version: string
   recommended_action: string
+  distance_km?: number
 }
 
 export interface AppointmentInput {
   appointment_at: string
   booked_at: string
   specialty: string
-  clinic_location?: string
+  clinic_area?: string
+  patient_area?: string
   patient_age_band: string
   patient_gender: string
   insurance_tier: string
@@ -26,7 +28,6 @@ export interface AppointmentInput {
   language_pref: string
   prior_noshow_count_12mo: number
   prior_attended_count_12mo: number
-  distance_km?: number
   emirate: string
 }
 

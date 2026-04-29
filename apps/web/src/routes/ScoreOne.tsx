@@ -1,29 +1,88 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { scoreSingle, type AppointmentInput, type ScoreResult } from '../lib/api'
 import { RiskBadge } from '../components/RiskBadge'
 import { ExplanationCard } from '../components/ExplanationCard'
 
 const SPECIALTIES = [
-  'cardiology', 'dermatology', 'endocrinology', 'ent', 'gastroenterology',
-  'general', 'neurology', 'obstetrics', 'oncology', 'ophthalmology',
-  'orthopedics', 'pediatrics', 'psychiatry', 'pulmonology', 'urology',
+  { value: 'cardiology', label: 'Cardiology' },
+  { value: 'dermatology', label: 'Dermatology' },
+  { value: 'endocrinology', label: 'Endocrinology' },
+  { value: 'ent', label: 'Ear, Nose and Throat' },
+  { value: 'gastroenterology', label: 'Gastroenterology' },
+  { value: 'general', label: 'General Practice' },
+  { value: 'neurology', label: 'Neurology' },
+  { value: 'obstetrics', label: 'Obstetrics and Gynaecology' },
+  { value: 'oncology', label: 'Oncology' },
+  { value: 'ophthalmology', label: 'Ophthalmology' },
+  { value: 'orthopedics', label: 'Orthopedics' },
+  { value: 'pediatrics', label: 'Pediatrics' },
+  { value: 'psychiatry', label: 'Psychiatry' },
+  { value: 'pulmonology', label: 'Pulmonology' },
+  { value: 'urology', label: 'Urology' },
 ]
 
-const EMIRATES = ['AD', 'DXB', 'SHJ', 'AJM', 'RAK', 'FUJ', 'UAQ']
+const EMIRATES = [
+  { value: 'AD', label: 'Abu Dhabi' },
+  { value: 'DXB', label: 'Dubai' },
+  { value: 'SHJ', label: 'Sharjah' },
+  { value: 'AJM', label: 'Ajman' },
+  { value: 'RAK', label: 'Ras Al Khaimah' },
+  { value: 'FUJ', label: 'Fujairah' },
+  { value: 'UAQ', label: 'Umm Al Quwain' },
+]
+
+const AGE_BANDS = [
+  { value: '0-17', label: 'Under 18' },
+  { value: '18-39', label: '18 to 39' },
+  { value: '40-64', label: '40 to 64' },
+  { value: '65+', label: '65 and above' },
+]
+
+const GENDERS = [
+  { value: 'm', label: 'Male' },
+  { value: 'f', label: 'Female' },
+  { value: 'unknown', label: 'Not specified' },
+]
+
+const INSURANCE_TIERS = [
+  { value: 'thiqa', label: 'Thiqa' },
+  { value: 'daman_basic', label: 'Daman Basic' },
+  { value: 'daman_enhanced', label: 'Daman Enhanced' },
+  { value: 'commercial', label: 'Commercial' },
+  { value: 'self_pay', label: 'Self Pay' },
+]
+
+const BOOKING_CHANNELS = [
+  { value: 'app', label: 'Mobile App' },
+  { value: 'web', label: 'Website' },
+  { value: 'phone', label: 'Phone Call' },
+  { value: 'walk_in', label: 'Walk In' },
+]
+
+const LANGUAGES = [
+  { value: 'en', label: 'English' },
+  { value: 'ar', label: 'Arabic' },
+  { value: 'ur', label: 'Urdu' },
+  { value: 'tl', label: 'Tagalog' },
+  { value: 'other', label: 'Other' },
+]
 
 export function ScoreOne() {
   const [result, setResult] = useState<ScoreResult | null>(null)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
+    setError(null)
     const fd = new FormData(e.currentTarget)
     const input: AppointmentInput = {
       appointment_at: fd.get('appointment_at') as string,
       booked_at: fd.get('booked_at') as string,
       specialty: fd.get('specialty') as string,
-      clinic_location: fd.get('clinic_location') as string || undefined,
+      clinic_area: (fd.get('clinic_area') as string) || undefined,
+      patient_area: (fd.get('patient_area') as string) || undefined,
       patient_age_band: fd.get('patient_age_band') as string,
       patient_gender: fd.get('patient_gender') as string,
       insurance_tier: fd.get('insurance_tier') as string,
@@ -31,13 +90,13 @@ export function ScoreOne() {
       language_pref: fd.get('language_pref') as string,
       prior_noshow_count_12mo: Number(fd.get('prior_noshow_count_12mo')),
       prior_attended_count_12mo: Number(fd.get('prior_attended_count_12mo')),
-      distance_km: fd.get('distance_km') ? Number(fd.get('distance_km')) : undefined,
       emirate: fd.get('emirate') as string,
     }
     try {
       const res = await scoreSingle(input)
       setResult(res)
     } catch (err) {
+      setError('Failed to score appointment. Please try again.')
       console.error(err)
     } finally {
       setLoading(false)
@@ -45,66 +104,97 @@ export function ScoreOne() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
       <div>
-        <h2 className="text-xl font-medium mb-4">Score Appointment</h2>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Appointment date/time" name="appointment_at" type="datetime-local" required />
-            <Field label="Booked date/time" name="booked_at" type="datetime-local" required />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Select label="Specialty" name="specialty" options={SPECIALTIES} />
-            <Select label="Emirate" name="emirate" options={EMIRATES} />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Select label="Age band" name="patient_age_band" options={['0-17', '18-39', '40-64', '65+']} />
-            <Select label="Gender" name="patient_gender" options={['m', 'f', 'unknown']} />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Select label="Insurance tier" name="insurance_tier" options={['thiqa', 'daman_basic', 'daman_enhanced', 'commercial', 'self_pay']} />
-            <Select label="Booking channel" name="booking_channel" options={['app', 'web', 'phone', 'walk_in']} />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Select label="Language preference" name="language_pref" options={['en', 'ar', 'ur', 'tl', 'other']} />
-            <Field label="Distance (km)" name="distance_km" type="number" />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="No shows (12mo)" name="prior_noshow_count_12mo" type="number" defaultValue="0" />
-            <Field label="Attended (12mo)" name="prior_attended_count_12mo" type="number" defaultValue="0" />
-          </div>
-          <Field label="Clinic location" name="clinic_location" />
+        <h2 className="text-xl font-medium mb-1">Score Appointment</h2>
+        <p className="text-sm text-text-secondary mb-5">
+          Enter appointment details to generate a no show risk assessment.
+        </p>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <fieldset className="space-y-3">
+            <legend className="text-xs font-medium text-gold mb-2 uppercase tracking-wide">Appointment Details</legend>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Appointment Date and Time" name="appointment_at" type="datetime-local" required />
+              <Field label="Booking Date and Time" name="booked_at" type="datetime-local" required />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <Select label="Specialty" name="specialty" options={SPECIALTIES} />
+              <Select label="Emirate" name="emirate" options={EMIRATES} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <Select label="Booking Channel" name="booking_channel" options={BOOKING_CHANNELS} />
+              <Select label="Language Preference" name="language_pref" options={LANGUAGES} />
+            </div>
+          </fieldset>
+
+          <fieldset className="space-y-3">
+            <legend className="text-xs font-medium text-gold mb-2 uppercase tracking-wide">Location</legend>
+            <div className="grid grid-cols-2 gap-3">
+              <AutocompleteField label="Clinic Area" name="clinic_area" placeholder="e.g. Al Maryah Island" />
+              <AutocompleteField label="Patient Area" name="patient_area" placeholder="e.g. Mussafah" />
+            </div>
+          </fieldset>
+
+          <fieldset className="space-y-3">
+            <legend className="text-xs font-medium text-gold mb-2 uppercase tracking-wide">Patient Profile</legend>
+            <div className="grid grid-cols-2 gap-3">
+              <Select label="Age Group" name="patient_age_band" options={AGE_BANDS} />
+              <Select label="Gender" name="patient_gender" options={GENDERS} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <Select label="Insurance" name="insurance_tier" options={INSURANCE_TIERS} />
+              <div />
+            </div>
+          </fieldset>
+
+          <fieldset className="space-y-3">
+            <legend className="text-xs font-medium text-gold mb-2 uppercase tracking-wide">Attendance History</legend>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Missed Appointments (Past 12 Months)" name="prior_noshow_count_12mo" type="number" defaultValue="0" min="0" />
+              <Field label="Attended Appointments (Past 12 Months)" name="prior_attended_count_12mo" type="number" defaultValue="0" min="0" />
+            </div>
+          </fieldset>
+
+          {error && (
+            <p className="text-sm text-risk-very-high">{error}</p>
+          )}
+
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gold hover:bg-gold-dim text-surface font-medium py-2 px-4 rounded transition-colors disabled:opacity-50"
+            className="w-full bg-gold hover:bg-gold-dim text-surface font-semibold py-2.5 px-4 rounded transition-colors disabled:opacity-50"
           >
-            {loading ? 'Scoring...' : 'Score Appointment'}
+            {loading ? 'Generating Risk Score...' : 'Generate Risk Score'}
           </button>
         </form>
       </div>
 
-      <div>
+      <div className="lg:sticky lg:top-6 lg:self-start">
         {result && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <RiskBadge band={result.risk_band} />
-              <span className="text-2xl font-medium">
-                {(result.probability * 100).toFixed(1)}%
-              </span>
+          <div className="space-y-5">
+            <div>
+              <p className="text-xs text-text-secondary uppercase tracking-wide mb-2">Risk Assessment</p>
+              <div className="flex items-center gap-3">
+                <RiskBadge band={result.risk_band} />
+                <span className="text-3xl font-medium">
+                  {(result.probability * 100).toFixed(0)}%
+                </span>
+                <span className="text-sm text-text-secondary">likelihood of no show</span>
+              </div>
             </div>
-            <p className="text-sm text-text-secondary">
-              Model: {result.model_version}
-            </p>
-            <div className="bg-surface-raised border border-white/5 rounded-lg p-4">
+            <div className="bg-surface-raised border border-gold/20 rounded-lg p-4">
+              <p className="text-xs text-text-secondary uppercase tracking-wide mb-1">Recommended Action</p>
               <p className="text-sm text-gold">{result.recommended_action}</p>
             </div>
             <ExplanationCard factors={result.top_factors} />
+            <p className="text-xs text-text-secondary">
+              Model: {result.model_version} — This is an operational tool, not a clinical decision.
+            </p>
           </div>
         )}
         {!result && (
-          <div className="flex items-center justify-center h-full text-text-secondary text-sm">
-            Score an appointment to see the risk assessment
+          <div className="flex items-center justify-center h-64 text-text-secondary text-sm border border-dashed border-white/10 rounded-lg">
+            Complete the form to see the risk assessment
           </div>
         )}
       </div>
@@ -118,24 +208,74 @@ function Field({ label, ...props }: { label: string } & React.InputHTMLAttribute
       <span className="text-xs text-text-secondary">{label}</span>
       <input
         {...props}
-        className="mt-0.5 w-full bg-surface-raised border border-white/10 rounded px-3 py-1.5 text-sm text-text-primary focus:border-gold focus:outline-none"
+        className="mt-0.5 w-full bg-surface-raised border border-white/10 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
       />
     </label>
   )
 }
 
-function Select({ label, name, options }: { label: string; name: string; options: string[] }) {
+function Select({ label, name, options }: { label: string; name: string; options: Array<{ value: string; label: string }> }) {
   return (
     <label className="block">
       <span className="text-xs text-text-secondary">{label}</span>
       <select
         name={name}
-        className="mt-0.5 w-full bg-surface-raised border border-white/10 rounded px-3 py-1.5 text-sm text-text-primary focus:border-gold focus:outline-none"
+        className="mt-0.5 w-full bg-surface-raised border border-white/10 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
       >
         {options.map((o) => (
-          <option key={o} value={o}>{o}</option>
+          <option key={o.value} value={o.value}>{o.label}</option>
         ))}
       </select>
+    </label>
+  )
+}
+
+function AutocompleteField({ label, name, placeholder }: { label: string; name: string; placeholder: string }) {
+  const [query, setQuery] = useState('')
+  const [suggestions, setSuggestions] = useState<Array<{ description: string; place_id: string }>>([])
+  const [open, setOpen] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  useEffect(() => {
+    if (query.length < 2) { setSuggestions([]); return }
+    clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/autocomplete?q=${encodeURIComponent(query + ' UAE')}`)
+        const data = await res.json()
+        setSuggestions(data.predictions || [])
+        setOpen(true)
+      } catch { setSuggestions([]) }
+    }, 300)
+    return () => clearTimeout(debounceRef.current)
+  }, [query])
+
+  return (
+    <label className="block relative">
+      <span className="text-xs text-text-secondary">{label}</span>
+      <input
+        name={name}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onFocus={() => suggestions.length > 0 && setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 200)}
+        placeholder={placeholder}
+        autoComplete="off"
+        className="mt-0.5 w-full bg-surface-raised border border-white/10 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
+      />
+      {open && suggestions.length > 0 && (
+        <ul className="absolute z-10 mt-1 w-full bg-surface-raised border border-white/10 rounded shadow-lg max-h-40 overflow-y-auto">
+          {suggestions.map((s) => (
+            <li
+              key={s.place_id}
+              onMouseDown={() => { setQuery(s.description); setOpen(false) }}
+              className="px-3 py-2 text-xs text-text-primary hover:bg-gold/10 cursor-pointer"
+            >
+              {s.description}
+            </li>
+          ))}
+        </ul>
+      )}
     </label>
   )
 }

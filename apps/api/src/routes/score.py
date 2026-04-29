@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from ..ml.features import compute_features
 from ..ml.heuristic import HeuristicScorer
 from ..ml.explain import explain_score
+from .geocode import geocode_area, haversine_km
 
 router = APIRouter()
 
@@ -16,7 +17,8 @@ class AppointmentInput(BaseModel):
     appointment_at: datetime
     booked_at: datetime
     specialty: str
-    clinic_location: Optional[str] = None
+    clinic_area: Optional[str] = None
+    patient_area: Optional[str] = None
     patient_age_band: str = Field(pattern=r"^(0-17|18-39|40-64|65\+)$")
     patient_gender: str = Field(pattern=r"^(m|f|unknown)$")
     insurance_tier: str
@@ -24,7 +26,6 @@ class AppointmentInput(BaseModel):
     language_pref: str = "en"
     prior_noshow_count_12mo: int = 0
     prior_attended_count_12mo: int = 0
-    distance_km: Optional[float] = None
     emirate: str = "AD"
 
 
@@ -35,11 +36,29 @@ class ScoreResult(BaseModel):
     top_factors: list[dict]
     model_version: str
     recommended_action: str
+    distance_km: Optional[float] = None
 
 
 @router.post("/single", response_model=ScoreResult)
 async def score_single(appointment: AppointmentInput):
-    features = compute_features(appointment.model_dump())
+    raw = appointment.model_dump()
+
+    # Compute distance from area names if both provided
+    distance_km = None
+    if appointment.clinic_area and appointment.patient_area:
+        clinic_coords = await geocode_area(appointment.clinic_area)
+        patient_coords = await geocode_area(appointment.patient_area)
+        if clinic_coords and patient_coords:
+            distance_km = round(
+                haversine_km(
+                    patient_coords[0], patient_coords[1],
+                    clinic_coords[0], clinic_coords[1],
+                ),
+                1,
+            )
+            raw["distance_km"] = distance_km
+
+    features = compute_features(raw)
     scorer = HeuristicScorer()
     probability = scorer.score(features)
     risk_band = _to_risk_band(probability)
@@ -53,13 +72,13 @@ async def score_single(appointment: AppointmentInput):
         top_factors=factors,
         model_version="heuristic_v1",
         recommended_action=action,
+        distance_km=distance_km,
     )
 
 
 @router.post("/bulk")
 async def score_bulk(file: UploadFile):
     """Accept CSV upload, score each row, return scored CSV."""
-    # Stub: will implement CSV parsing and bulk scoring in week 3
     return {"status": "not_implemented", "message": "Bulk scoring available in week 3"}
 
 
