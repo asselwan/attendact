@@ -15,7 +15,8 @@ import anthropic
 
 from . import score_store
 
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+LITELLM_API_KEY = os.getenv("LITELLM_API_KEY", "")
+LITELLM_BASE_URL = os.getenv("LITELLM_BASE_URL", "https://litellm.nomoi.ai")
 
 SYSTEM_PROMPT = """You are an operations analyst for a UAE hospital network. You analyse appointment no-show risk scoring patterns and surface actionable insights for the operations team.
 
@@ -123,17 +124,20 @@ async def generate_insights() -> list[dict]:
             }
         ]
 
-    if not ANTHROPIC_API_KEY:
+    if not LITELLM_API_KEY:
         return [
             {
                 "title": "LLM not configured",
-                "body": "Set ANTHROPIC_API_KEY environment variable to enable AI powered insights.",
+                "body": "Set LITELLM_API_KEY environment variable to enable AI powered insights.",
                 "category": "risk_pattern",
                 "confidence": "low",
             }
         ]
 
-    client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+    client = anthropic.AsyncAnthropic(
+        api_key=LITELLM_API_KEY,
+        base_url=LITELLM_BASE_URL,
+    )
 
     user_msg = f"""Here are the aggregated no-show risk scoring patterns for our hospital:
 
