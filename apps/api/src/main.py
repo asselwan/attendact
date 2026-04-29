@@ -17,12 +17,12 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="AttendAct API",
+    title="Noshight API",
     version="0.1.0",
     lifespan=lifespan,
 )
 
-cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,https://noshight.nomoi.ai").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
@@ -38,4 +38,4 @@ app.include_router(audit.router, prefix="/api/audit", tags=["audit"])
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "version": "0.1.0", "product": "attendact"}
+    return {"status": "ok", "version": "0.1.0", "product": "noshight"}

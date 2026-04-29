@@ -1,6 +1,6 @@
-# AttendAct
+# Noshight
 
-UAE no-show prediction signal product. Scores appointment risk and triggers multilingual interventions.
+No-show + Insight. UAE no-show prediction signal product. Scores appointment risk and triggers multilingual interventions.
 
 ## Stack
 
@@ -8,7 +8,7 @@ UAE no-show prediction signal product. Scores appointment risk and triggers mult
 - **Web**: React + Vite + TypeScript + Tailwind
 - **DB**: Supabase Postgres (Frankfurt)
 - **Host**: Coolify on Hetzner
-- **Domain**: attendact.nomoi.ai
+- **Domain**: noshight.nomoi.ai
 
 ## Local development
 

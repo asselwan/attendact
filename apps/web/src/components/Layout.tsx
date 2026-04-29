@@ -12,7 +12,7 @@ export function Layout() {
     <div className="min-h-screen flex flex-col">
       <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-gold font-black text-lg tracking-tight">ATTENDACT</span>
+          <span className="text-gold font-black text-lg tracking-tight">NOSHIGHT</span>
           <span className="text-text-secondary text-sm">by NOMOI</span>
         </div>
         <nav className="flex gap-1">
@@ -37,7 +37,7 @@ export function Layout() {
         <Outlet />
       </main>
       <footer className="border-t border-white/10 px-6 py-3 text-text-secondary text-xs">
-        AttendAct v0.1.0 — Heuristic baseline. Not a clinical decision tool.
+        Noshight v0.1.0 — Heuristic baseline. Not a clinical decision tool.
       </footer>
     </div>
   )
