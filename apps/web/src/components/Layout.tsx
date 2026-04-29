@@ -4,6 +4,7 @@ const navItems = [
   { to: '/score', label: 'Score' },
   { to: '/bulk', label: 'Bulk' },
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/insights', label: 'Insights' },
   { to: '/audit', label: 'Audit' },
 ]
 

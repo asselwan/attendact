@@ -51,3 +51,21 @@ export async function scoreBulk(file: File): Promise<Blob> {
   if (!res.ok) throw new Error(`Bulk score failed: ${res.status}`)
   return res.blob()
 }
+
+export interface Insight {
+  title: string
+  body: string
+  category: 'scheduling' | 'capacity' | 'risk_pattern' | 'intervention'
+  confidence: 'high' | 'medium' | 'low'
+}
+
+export interface InsightsResponse {
+  insights: Insight[]
+  total_scores_analysed: number
+}
+
+export async function fetchInsights(): Promise<InsightsResponse> {
+  const res = await fetch(`${BASE}/api/insights/generate`)
+  if (!res.ok) throw new Error(`Insights failed: ${res.status}`)
+  return res.json()
+}

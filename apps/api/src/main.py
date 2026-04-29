@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from .routes import audit, geocode, outcomes, score
+from .routes import audit, geocode, insights, outcomes, score
 
 
 @asynccontextmanager
@@ -38,6 +38,7 @@ app.include_router(score.router, prefix="/api/score", tags=["scoring"])
 app.include_router(geocode.router, prefix="/api", tags=["location"])
 app.include_router(outcomes.router, prefix="/api/outcomes", tags=["outcomes"])
 app.include_router(audit.router, prefix="/api/audit", tags=["audit"])
+app.include_router(insights.router, prefix="/api/insights", tags=["insights"])
 
 
 @app.get("/api/health")

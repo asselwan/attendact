@@ -9,6 +9,8 @@ from ..ml.features import compute_features
 from ..ml.heuristic import HeuristicScorer
 from ..ml.explain import explain_score
 from ..ml.locations import compute_distance
+from ..ml import score_store
+from ..ml.score_store import ScoredAppointment
 
 router = APIRouter()
 
@@ -55,7 +57,7 @@ async def score_single(appointment: AppointmentInput):
     factors = explain_score(features, probability, scorer)
     action = _recommended_action(risk_band, factors)
 
-    return ScoreResult(
+    result = ScoreResult(
         appointment_id=str(uuid.uuid4()),
         probability=round(probability, 4),
         risk_band=risk_band,
@@ -64,6 +66,26 @@ async def score_single(appointment: AppointmentInput):
         recommended_action=action,
         distance_km=distance_km,
     )
+
+    # Append to in-memory store for insights aggregation
+    score_store.append(ScoredAppointment(
+        scored_at=datetime.utcnow(),
+        specialty=appointment.specialty,
+        clinic_area=appointment.clinic_area or "",
+        patient_area=appointment.patient_area or "",
+        emirate=appointment.emirate,
+        probability=result.probability,
+        risk_band=risk_band,
+        distance_km=distance_km,
+        lead_time_days=features.get("lead_time_days", 0),
+        insurance_tier=appointment.insurance_tier,
+        booking_channel=appointment.booking_channel,
+        patient_age_band=appointment.patient_age_band,
+        time_of_day_band=features.get("time_of_day_band", "morning"),
+        top_factors=factors,
+    ))
+
+    return result
 
 
 @router.post("/bulk")
