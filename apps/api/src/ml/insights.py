@@ -142,7 +142,7 @@ async def generate_insights() -> list[dict]:
 Analyse these patterns and provide actionable insights for our operations team."""
 
     response = await client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-6",
         max_tokens=1024,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_msg}],
