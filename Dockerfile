@@ -11,9 +11,9 @@ WORKDIR /app
 RUN pip install --no-cache-dir uv
 
 COPY apps/api/pyproject.toml .
-RUN uv pip install --system -e .
-
 COPY apps/api/src ./src
+RUN uv pip install --system .
+
 COPY --from=web-build /web/dist ./static
 
 EXPOSE 8000
