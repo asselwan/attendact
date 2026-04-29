@@ -9,12 +9,7 @@ import {
 } from '../lib/api'
 import { RiskBadge } from '../components/RiskBadge'
 
-const RISK_BAND_LABELS: Record<string, string> = {
-  low: 'Low',
-  moderate: 'Moderate',
-  high: 'High',
-  very_high: 'Very High',
-}
+type RiskBand = 'low' | 'moderate' | 'high' | 'very_high'
 
 export function Review() {
   const [review, setReview] = useState<ReviewResponse | null>(null)
@@ -179,7 +174,7 @@ export function Review() {
                   {Object.entries(review.calibration.bands).map(([band, stats]) => (
                     <div key={band} className="bg-surface-raised border border-white/5 rounded-lg p-4 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <RiskBadge band={band} />
+                        <RiskBadge band={band as RiskBand} />
                         <span className="text-sm text-text-secondary">{stats.count} outcomes</span>
                       </div>
                       <div className="flex gap-6 text-sm">
@@ -254,7 +249,7 @@ function ErrorCard({ error }: { error: PredictionError }) {
     <div className="bg-surface-raised border border-white/5 rounded-lg p-4">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
-          <RiskBadge band={error.risk_band} />
+          <RiskBadge band={error.risk_band as RiskBand} />
           <span className="text-sm font-medium">
             {(error.probability * 100).toFixed(0)}% predicted
           </span>
