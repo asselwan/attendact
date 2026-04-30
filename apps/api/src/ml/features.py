@@ -75,11 +75,35 @@ def compute_features(raw: dict) -> dict:
         "patient_age_band": raw.get("patient_age_band", "18-39"),
         "patient_gender": raw.get("patient_gender", "unknown"),
         "emirate": raw.get("emirate", "AD"),
+        # Medical condition flags (from Brazil Kaggle dataset, Carreras-Garcia 2020)
+        "has_hypertension": bool(raw.get("has_hypertension", False)),
+        "has_diabetes": bool(raw.get("has_diabetes", False)),
+        "has_alcoholism": bool(raw.get("has_alcoholism", False)),
+        "has_disability": bool(raw.get("has_disability", False)),
+        # Socioeconomic and engagement signals
+        "has_welfare": bool(raw.get("has_welfare", False)),
+        "sms_reminder_sent": bool(raw.get("sms_reminder_sent", False)),
+        # Prior appointment count (patient engagement proxy)
+        "prior_appointment_count": raw.get("prior_appointment_count", 0),
+        # Temporal signals
+        "is_quarter_end": appointment_at.month in (3, 6, 9, 12) and appointment_at.day >= 25,
+        "is_month_end": appointment_at.day >= 28,
+        # Neighbourhood/area baseline (populated from DB later)
+        "neighbourhood_baseline_rate": raw.get("neighbourhood_baseline_rate", 0.21),
         # Placeholders for tenant-level baselines (populated from DB later)
         "specialty_baseline_rate": 0.21,
         "provider_baseline_rate": 0.21,
         # Heat index (populated from Open-Meteo in production)
         "heat_index_band": "moderate",
+        # Appointment regularity (from predict-appointment-noshow scout ref)
+        # Measures consistency of visit intervals — irregular visitors are higher risk
+        "visit_regularity": _visit_regularity(raw.get("prior_visit_intervals_days")),
+        # Reschedule count — patients who reschedule multiple times are higher risk
+        "reschedule_count": raw.get("reschedule_count", 0),
+        # Is this a rescheduled appointment (vs original booking)
+        "is_rescheduled": bool(raw.get("is_rescheduled", False)),
+        # New patient flag (first-ever appointment has different no-show profile)
+        "is_new_patient": raw.get("prior_appointment_count", 0) == 0,
     }
 
 
@@ -115,6 +139,31 @@ def _lead_time_band(days: int) -> str:
     elif days <= 30:
         return "15-30d"
     return "30d+"
+
+
+def _visit_regularity(intervals: list | None) -> float:
+    """Compute visit regularity score from prior visit intervals.
+
+    Ported from predict-appointment-noshow (scout-refs/noshight/) automated
+    feature engineering. Measures coefficient of variation of inter-visit
+    intervals. Regular visitors (low CV) are less likely to no-show.
+
+    Returns: 0.0 (perfectly regular) to 1.0 (highly irregular).
+    Returns 0.5 (neutral) when insufficient data.
+    """
+    if not intervals or len(intervals) < 2:
+        return 0.5  # neutral when insufficient history
+
+    mean_interval = sum(intervals) / len(intervals)
+    if mean_interval == 0:
+        return 0.5
+
+    variance = sum((x - mean_interval) ** 2 for x in intervals) / len(intervals)
+    std_dev = math.sqrt(variance)
+    cv = std_dev / mean_interval  # coefficient of variation
+
+    # Clamp CV to [0, 1] range. CV > 1 = highly irregular, cap at 1.0.
+    return round(min(cv, 1.0), 4)
 
 
 def _time_of_day_band(hour: int) -> str:

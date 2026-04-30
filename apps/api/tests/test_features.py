@@ -84,3 +84,55 @@ def test_distance_band():
     }
     features = compute_features(raw)
     assert features["distance_band"] == "30km+"
+
+
+def test_visit_regularity_regular():
+    raw = {
+        "appointment_at": datetime(2026, 5, 10, 9, 0),
+        "booked_at": datetime(2026, 5, 8, 9, 0),
+        "specialty": "general",
+        "patient_age_band": "40-64",
+        "patient_gender": "m",
+        "insurance_tier": "commercial",
+        "booking_channel": "phone",
+        "emirate": "AD",
+        # Monthly visits with low variance
+        "prior_visit_intervals_days": [30, 31, 29, 30, 31],
+    }
+    features = compute_features(raw)
+    # Regular visitor should have low regularity score (near 0)
+    assert features["visit_regularity"] < 0.1
+
+
+def test_visit_regularity_irregular():
+    raw = {
+        "appointment_at": datetime(2026, 5, 10, 9, 0),
+        "booked_at": datetime(2026, 5, 8, 9, 0),
+        "specialty": "general",
+        "patient_age_band": "18-39",
+        "patient_gender": "f",
+        "insurance_tier": "commercial",
+        "booking_channel": "app",
+        "emirate": "AD",
+        # Highly irregular intervals
+        "prior_visit_intervals_days": [7, 90, 14, 120, 3],
+    }
+    features = compute_features(raw)
+    # Irregular visitor should have high regularity score (near 1)
+    assert features["visit_regularity"] > 0.7
+
+
+def test_new_patient_flag():
+    raw = {
+        "appointment_at": datetime(2026, 5, 10, 9, 0),
+        "booked_at": datetime(2026, 5, 8, 9, 0),
+        "specialty": "general",
+        "patient_age_band": "18-39",
+        "patient_gender": "m",
+        "insurance_tier": "self_pay",
+        "booking_channel": "web",
+        "emirate": "AD",
+        "prior_appointment_count": 0,
+    }
+    features = compute_features(raw)
+    assert features["is_new_patient"] is True
