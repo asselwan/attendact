@@ -16,37 +16,7 @@
 </script>
 
 
-<!-- NOMOI Surface live hero -->
-<div id="__nomoi-surface-hero" aria-hidden="true" style="position:fixed;inset:0;z-index:-1;opacity:0;transition:opacity 2s ease-in-out;pointer-events:none;background-size:cover;background-position:center;background-repeat:no-repeat"></div>
-<script>
-(function(){
-  if(window.__nomoiHeroLoaded) return; window.__nomoiHeroLoaded=true;
-  var s='noshight.nomoi.ai';
-  fetch('https://ingest.atlas.nomoi.ai/api/surface/hero?surface='+encodeURIComponent(s))
-    .then(function(r){return r.json()})
-    .then(function(d){
-      if(!d || !d.url) return;
-      var el=document.getElementById('__nomoi-surface-hero');
-      if(!el) return;
-      var img=new Image();
-      img.onload=function(){
-        el.style.backgroundImage='url('+d.url+')';
-        try{
-          var bg=getComputedStyle(document.body).backgroundColor;
-          var m=bg.match(/\d+/g);
-          var L=m?(parseInt(m[0])+parseInt(m[1])+parseInt(m[2]))/(3*255):0.5;
-          el.style.opacity=L<0.5?'0.18':'0.05';
-          if(L>=0.5){
-            el.style.maskImage='radial-gradient(ellipse at center,rgba(0,0,0,0.4) 0%,rgba(0,0,0,0) 70%)';
-            el.style.webkitMaskImage='radial-gradient(ellipse at center,rgba(0,0,0,0.4) 0%,rgba(0,0,0,0) 70%)';
-          }
-        }catch(_){el.style.opacity='0.2'}
-      };
-      img.src=d.url;
-    })
-    .catch(function(){});
-})();
-</script>
+
 
 </body>
 </html>
