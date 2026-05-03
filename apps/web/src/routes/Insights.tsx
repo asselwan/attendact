@@ -69,7 +69,7 @@ export function Insights() {
       )}
 
       {!data && !error && (
-        <div className="flex items-center justify-center h-64 text-text-secondary text-sm border border-dashed border-white/10 rounded-lg">
+        <div className="flex items-center justify-center h-64 text-text-secondary text-sm border border-dashed border-white/20 rounded-lg">
           Score appointments, then generate insights to see AI powered operational intelligence
         </div>
       )}
@@ -79,7 +79,7 @@ export function Insights() {
 
 function InsightCard({ insight }: { insight: Insight }) {
   return (
-    <div className="bg-surface-raised border border-white/5 rounded-lg p-5">
+    <div className="bg-surface-raised border border-white/15 rounded-lg p-5">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-xs font-medium text-gold uppercase tracking-wide">
           {CATEGORY_LABELS[insight.category] || insight.category}

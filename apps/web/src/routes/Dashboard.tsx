@@ -71,7 +71,7 @@ export function Dashboard() {
           <StatCard label="Average risk" value="—" />
           <StatCard label="High risk %" value="—" />
         </div>
-        <div className="bg-surface-raised border border-white/5 rounded-lg p-6 text-center text-text-secondary text-sm">
+        <div className="bg-surface-raised border border-white/15 rounded-lg p-6 text-center text-text-secondary text-sm">
           Score some appointments to populate the dashboard.
         </div>
       </div>
@@ -92,7 +92,7 @@ export function Dashboard() {
 
       {/* Risk distribution */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="bg-surface-raised border border-white/5 rounded-lg p-5">
+        <div className="bg-surface-raised border border-white/15 rounded-lg p-5">
           <h3 className="text-sm font-medium text-text-secondary mb-3">Risk distribution</h3>
           <div className="space-y-2">
             {RISK_ORDER.map((band) => {
@@ -120,7 +120,7 @@ export function Dashboard() {
 
         {/* Top risk factors */}
         {aggregates?.top_risk_factors && Object.keys(aggregates.top_risk_factors).length > 0 && (
-          <div className="bg-surface-raised border border-white/5 rounded-lg p-5">
+          <div className="bg-surface-raised border border-white/15 rounded-lg p-5">
             <h3 className="text-sm font-medium text-text-secondary mb-3">Top contributing factors</h3>
             <div className="space-y-2">
               {Object.entries(aggregates.top_risk_factors)
@@ -160,7 +160,7 @@ export function Dashboard() {
 
       {/* Calibration */}
       {metrics?.calibration_by_band && Object.keys(metrics.calibration_by_band).length > 0 && (
-        <div className="bg-surface-raised border border-white/5 rounded-lg p-5">
+        <div className="bg-surface-raised border border-white/15 rounded-lg p-5">
           <h3 className="text-sm font-medium text-text-secondary mb-3">Calibration accuracy</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -178,7 +178,7 @@ export function Dashboard() {
                   const b = metrics.calibration_by_band[band]
                   if (!b) return null
                   return (
-                    <tr key={band} className="border-t border-white/5">
+                    <tr key={band} className="border-t border-white/15">
                       <td className="py-2 pr-4">
                         <span className={`text-xs px-2 py-0.5 rounded ${RISK_COLORS[band]}`}>
                           {band.replace('_', ' ')}
@@ -202,7 +202,7 @@ export function Dashboard() {
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-surface-raised border border-white/5 rounded-lg p-4">
+    <div className="bg-surface-raised border border-white/15 rounded-lg p-4">
       <p className="text-xs text-text-secondary">{label}</p>
       <p className="text-2xl font-medium mt-1">{value}</p>
     </div>
@@ -218,7 +218,7 @@ function BreakdownTable({
 }) {
   const sorted = Object.entries(data).sort(([, a], [, b]) => b.avg_risk - a.avg_risk)
   return (
-    <div className="bg-surface-raised border border-white/5 rounded-lg p-5">
+    <div className="bg-surface-raised border border-white/15 rounded-lg p-5">
       <h3 className="text-sm font-medium text-text-secondary mb-3">{title}</h3>
       <table className="w-full text-sm">
         <thead>
@@ -230,7 +230,7 @@ function BreakdownTable({
         </thead>
         <tbody>
           {sorted.map(([name, { count, avg_risk }]) => (
-            <tr key={name} className="border-t border-white/5">
+            <tr key={name} className="border-t border-white/15">
               <td className="py-1.5">{name.replace(/_/g, ' ')}</td>
               <td className="text-right py-1.5 text-text-secondary">{count}</td>
               <td className="text-right py-1.5">{(avg_risk * 100).toFixed(1)}%</td>

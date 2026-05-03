@@ -274,7 +274,7 @@ export function ScoreOne() {
           </div>
         )}
         {!result && (
-          <div className="flex items-center justify-center h-64 text-text-secondary text-sm border border-dashed border-white/10 rounded-lg">
+          <div className="flex items-center justify-center h-64 text-text-secondary text-sm border border-dashed border-white/20 rounded-lg">
             Complete the form to see the risk assessment
           </div>
         )}
@@ -289,7 +289,7 @@ function Field({ label, ...props }: { label: string } & React.InputHTMLAttribute
       <span className="text-xs text-text-secondary">{label}</span>
       <input
         {...props}
-        className="mt-0.5 w-full bg-surface-raised border border-white/10 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
+        className="mt-0.5 w-full bg-surface-raised border border-white/20 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
       />
     </label>
   )
@@ -301,7 +301,7 @@ function Select({ label, name, options }: { label: string; name: string; options
       <span className="text-xs text-text-secondary">{label}</span>
       <select
         name={name}
-        className="mt-0.5 w-full bg-surface-raised border border-white/10 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
+        className="mt-0.5 w-full bg-surface-raised border border-white/20 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>{o.label}</option>
@@ -321,7 +321,7 @@ function GroupedSelect({ label, name, groups }: {
       <span className="text-xs text-text-secondary">{label}</span>
       <select
         name={name}
-        className="mt-0.5 w-full bg-surface-raised border border-white/10 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
+        className="mt-0.5 w-full bg-surface-raised border border-white/20 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
       >
         <option value="">Select area</option>
         {groups.map((g) => (

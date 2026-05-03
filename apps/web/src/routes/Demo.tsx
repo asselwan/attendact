@@ -109,8 +109,8 @@ export function Demo() {
           <button
             key={s.id}
             onClick={() => runScenario(s)}
-            className={`w-full text-left bg-surface-raised border rounded-lg p-4 transition-colors hover:border-gold/40 ${
-              activeId === s.id ? 'border-gold/60' : 'border-white/10'
+            className={`w-full text-left bg-surface-raised border rounded-lg p-4 transition-colors hover:border-gold/60 ${
+              activeId === s.id ? 'border-gold' : 'border-white/20'
             }`}
           >
             <p className="text-sm font-medium text-text-primary">{s.title}</p>
@@ -136,16 +136,16 @@ export function Demo() {
                 <span className="text-sm text-text-secondary">likelihood of no show</span>
               </div>
             </div>
-            <div className="bg-surface-raised border border-gold/20 rounded-lg p-4">
+            <div className="bg-surface-raised border border-gold/40 rounded-lg p-4">
               <p className="text-xs text-text-secondary uppercase tracking-wide mb-1">Recommended Action</p>
-              <p className="text-sm text-gold">{result.recommended_action}</p>
+              <p className="text-sm text-gold font-medium">{result.recommended_action}</p>
             </div>
             <ExplanationCard factors={result.top_factors} />
           </div>
         )}
       </div>
 
-      <div className="border-t border-white/10 pt-8 space-y-3">
+      <div className="border-t border-white/20 pt-8 space-y-3">
         <p className="text-base text-text-primary">
           Want this scoring your real patient list?
         </p>

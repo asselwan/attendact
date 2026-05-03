@@ -12,7 +12,7 @@ export function ExplanationCard({ factors }: { factors: Factor[] }) {
       {factors.map((factor) => (
         <div
           key={factor.feature}
-          className="bg-surface-raised border border-white/5 rounded-lg p-3"
+          className="bg-surface-raised border border-white/15 rounded-lg p-3"
         >
           <div className="flex items-start justify-between gap-2">
             <p className="text-sm text-text-primary">{factor.plain_text}</p>

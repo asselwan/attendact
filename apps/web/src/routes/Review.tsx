@@ -86,7 +86,7 @@ export function Review() {
                   value={o.appointment_id}
                   onChange={(e) => updateOutcome(idx, 'appointment_id', e.target.value)}
                   placeholder="Paste appointment ID from scoring result"
-                  className="mt-0.5 w-full bg-surface-raised border border-white/10 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none font-mono"
+                  className="mt-0.5 w-full bg-surface-raised border border-white/20 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none font-mono"
                 />
               </label>
               <label className="w-40 block">
@@ -94,7 +94,7 @@ export function Review() {
                 <select
                   value={o.outcome}
                   onChange={(e) => updateOutcome(idx, 'outcome', e.target.value)}
-                  className="mt-0.5 w-full bg-surface-raised border border-white/10 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
+                  className="mt-0.5 w-full bg-surface-raised border border-white/20 rounded px-3 py-2 text-sm text-text-primary focus:border-gold focus:outline-none"
                 >
                   <option value="attended">Attended</option>
                   <option value="no_show">No Show</option>
@@ -137,7 +137,7 @@ export function Review() {
             <button
               onClick={loadReview}
               disabled={loading}
-              className="bg-surface-raised border border-white/10 hover:border-gold/30 text-text-primary font-medium py-2 px-4 rounded text-sm transition-colors disabled:opacity-50"
+              className="bg-surface-raised border border-white/20 hover:border-gold/30 text-text-primary font-medium py-2 px-4 rounded text-sm transition-colors disabled:opacity-50"
             >
               {loading ? 'Loading...' : 'Load Review'}
             </button>
@@ -172,7 +172,7 @@ export function Review() {
                 <h3 className="text-sm font-medium mb-3">Calibration by Risk Band</h3>
                 <div className="grid grid-cols-1 gap-2">
                   {Object.entries(review.calibration.bands).map(([band, stats]) => (
-                    <div key={band} className="bg-surface-raised border border-white/5 rounded-lg p-4 flex items-center justify-between">
+                    <div key={band} className="bg-surface-raised border border-white/15 rounded-lg p-4 flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <RiskBadge band={band as RiskBand} />
                         <span className="text-sm text-text-secondary">{stats.count} outcomes</span>
@@ -212,7 +212,7 @@ export function Review() {
             )}
 
             {review.total_with_outcomes === 0 && (
-              <div className="flex items-center justify-center h-32 text-text-secondary text-sm border border-dashed border-white/10 rounded-lg">
+              <div className="flex items-center justify-center h-32 text-text-secondary text-sm border border-dashed border-white/20 rounded-lg">
                 No outcomes recorded yet. Record outcomes above to see how the model is performing.
               </div>
             )}
@@ -220,7 +220,7 @@ export function Review() {
         )}
 
         {!review && (
-          <div className="flex items-center justify-center h-32 text-text-secondary text-sm border border-dashed border-white/10 rounded-lg">
+          <div className="flex items-center justify-center h-32 text-text-secondary text-sm border border-dashed border-white/20 rounded-lg">
             Click "Load Review" to see prediction accuracy and calibration data
           </div>
         )}
@@ -236,7 +236,7 @@ function StatCard({ label, value, subtitle, highlight }: {
   highlight?: boolean
 }) {
   return (
-    <div className="bg-surface-raised border border-white/5 rounded-lg p-4">
+    <div className="bg-surface-raised border border-white/15 rounded-lg p-4">
       <p className="text-xs text-text-secondary">{label}</p>
       <p className={`text-2xl font-medium mt-1 ${highlight ? 'text-gold' : ''}`}>{value}</p>
       {subtitle && <p className="text-xs text-text-secondary mt-1">{subtitle}</p>}
@@ -246,7 +246,7 @@ function StatCard({ label, value, subtitle, highlight }: {
 
 function ErrorCard({ error }: { error: PredictionError }) {
   return (
-    <div className="bg-surface-raised border border-white/5 rounded-lg p-4">
+    <div className="bg-surface-raised border border-white/15 rounded-lg p-4">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
           <RiskBadge band={error.risk_band as RiskBand} />

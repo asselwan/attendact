@@ -12,7 +12,7 @@ const navItems = [
 export function Layout() {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
+      <header className="border-b border-white/20 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="text-gold font-black text-lg tracking-tight">NOSHIGHT</span>
           <span className="text-text-secondary text-sm">by NOMOI</span>
@@ -38,7 +38,7 @@ export function Layout() {
       <main className="flex-1 p-6">
         <Outlet />
       </main>
-      <footer className="border-t border-white/10 px-6 py-3 text-text-secondary text-xs">
+      <footer className="border-t border-white/20 px-6 py-3 text-text-secondary text-xs">
         Noshight v0.1.0 — Heuristic baseline. Not a clinical decision tool.
       </footer>
     </div>
