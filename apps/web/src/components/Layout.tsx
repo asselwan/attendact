@@ -1,7 +1,8 @@
 import { NavLink, Outlet } from 'react-router-dom'
 
 const navItems = [
-  { to: '/score', label: 'Score' },
+  { to: '/score', label: 'Demo' },
+  { to: '/manual', label: 'Manual' },
   { to: '/bulk', label: 'Bulk' },
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/review', label: 'Review' },
