@@ -15,5 +15,38 @@
 (function(){if(window.__nomoiSurfaceEmit)return;var s='noshight.nomoi.ai',e='https://ingest.atlas.nomoi.ai/api/surface/ingest',k='__nomoi_surface_session';var id;try{id=sessionStorage.getItem(k)||crypto.randomUUID();sessionStorage.setItem(k,id)}catch(_){id=crypto.randomUUID()}function send(t,p){var b=JSON.stringify({surface:s,event:t,payload:p,ts:new Date().toISOString(),session_id:id});var bl=new Blob([b],{type:'application/json'});if(navigator.sendBeacon)navigator.sendBeacon(e,bl);else fetch(e,{method:'POST',body:bl,keepalive:true}).catch(function(){})}window.__nomoiSurfaceEmit=send;window.__nomoiSurfaceSessionId=id;send('page_view',{path:location.pathname,referrer_host:document.referrer?new URL(document.referrer).host:null,viewport_w:innerWidth,viewport_h:innerHeight});var ms=0;addEventListener('scroll',function(){var p=Math.round(((scrollY+innerHeight)/document.body.scrollHeight)*100);if(p>ms)ms=Math.min(100,p)},{passive:true});addEventListener('beforeunload',function(){send('scroll_depth',{max_pct:ms})});document.addEventListener('click',function(ev){var t=ev.target&&ev.target.closest&&ev.target.closest('[data-cta-id]');if(!t||t.closest('[data-no-capture]'))return;var r=t.getBoundingClientRect();send('cta_click',{cta_id:t.dataset.ctaId,position_y_pct:Math.round(((r.top+scrollY)/document.body.scrollHeight)*100)})});var streak=new Map();document.addEventListener('click',function(ev){var t=ev.target;if(!t)return;var id2=t.id||(t.tagName+':'+(t.className||''));var now=Date.now();var en=streak.get(id2);if(!en||now-en.first>3000)streak.set(id2,{count:1,first:now});else{en.count++;if(en.count>=3){send('rage_click',{target_id:id2,count_3s:en.count});streak.delete(id2)}}});var lf=null;document.addEventListener('focusin',function(ev){var t=ev.target&&ev.target.closest&&ev.target.closest('input, textarea, select');var f=t&&t.closest&&t.closest('form');if(!t||!f||f.closest('[data-no-capture]'))return;lf={form_id:f.id||'anon',field_id:t.id||t.getAttribute('name')||'anon'};send('form_field_focus',lf)});addEventListener('beforeunload',function(){if(lf)send('form_abandon',{form_id:lf.form_id,last_field:lf.field_id})})})();
 </script>
 
+
+<!-- NOMOI Surface live hero -->
+<div id="__nomoi-surface-hero" aria-hidden="true" style="position:fixed;inset:0;z-index:-1;opacity:0;transition:opacity 2s ease-in-out;pointer-events:none;background-size:cover;background-position:center;background-repeat:no-repeat"></div>
+<script>
+(function(){
+  if(window.__nomoiHeroLoaded) return; window.__nomoiHeroLoaded=true;
+  var s='noshight.nomoi.ai';
+  fetch('https://ingest.atlas.nomoi.ai/api/surface/hero?surface='+encodeURIComponent(s))
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(!d || !d.url) return;
+      var el=document.getElementById('__nomoi-surface-hero');
+      if(!el) return;
+      var img=new Image();
+      img.onload=function(){
+        el.style.backgroundImage='url('+d.url+')';
+        try{
+          var bg=getComputedStyle(document.body).backgroundColor;
+          var m=bg.match(/\d+/g);
+          var L=m?(parseInt(m[0])+parseInt(m[1])+parseInt(m[2]))/(3*255):0.5;
+          el.style.opacity=L<0.5?'0.45':'0.12';
+          if(L>=0.5){
+            el.style.maskImage='radial-gradient(ellipse at center,rgba(0,0,0,0.4) 0%,rgba(0,0,0,0) 70%)';
+            el.style.webkitMaskImage='radial-gradient(ellipse at center,rgba(0,0,0,0.4) 0%,rgba(0,0,0,0) 70%)';
+          }
+        }catch(_){el.style.opacity='0.2'}
+      };
+      img.src=d.url;
+    })
+    .catch(function(){});
+})();
+</script>
+
 </body>
 </html>
