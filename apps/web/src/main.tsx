@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
 import { Layout } from './components/Layout'
-import { AccessGate } from './components/AccessGate'
 import { Demo } from './routes/Demo'
 import { ScoreOne } from './routes/ScoreOne'
 import { ScoreBulk } from './routes/ScoreBulk'
@@ -18,11 +17,11 @@ createRoot(document.getElementById('root')!).render(
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/score" replace />} />
           <Route path="/score" element={<Demo />} />
-          <Route path="/manual" element={<AccessGate><ScoreOne /></AccessGate>} />
-          <Route path="/bulk" element={<AccessGate><ScoreBulk /></AccessGate>} />
-          <Route path="/dashboard" element={<AccessGate><Dashboard /></AccessGate>} />
-          <Route path="/review" element={<AccessGate><Review /></AccessGate>} />
-          <Route path="/audit" element={<AccessGate><Audit /></AccessGate>} />
+          <Route path="/manual" element={<ScoreOne />} />
+          <Route path="/bulk" element={<ScoreBulk />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/review" element={<Review />} />
+          <Route path="/audit" element={<Audit />} />
         </Route>
       </Routes>
     </BrowserRouter>
