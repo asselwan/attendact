@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchMetrics } from '../lib/api'
+import { fetchMetrics, resetDashboard } from '../lib/api'
 
 interface Aggregates {
   total_scored: number
@@ -29,17 +29,34 @@ export function Dashboard() {
   } | null>(null)
   const [aggregates, setAggregates] = useState<Aggregates | null>(null)
   const [loading, setLoading] = useState(true)
+  const [resetting, setResetting] = useState(false)
 
-  useEffect(() => {
+  function load() {
+    setLoading(true)
     Promise.all([
       fetchMetrics(),
       fetch(`${BASE}/api/insights/aggregates`).then(r => r.ok ? r.json() : null),
     ]).then(([m, agg]) => {
       setMetrics(m)
-      if (agg?.aggregates) setAggregates(agg.aggregates)
+      setAggregates(agg?.aggregates ?? null)
       setLoading(false)
     }).catch(() => setLoading(false))
-  }, [])
+  }
+
+  useEffect(() => { load() }, [])
+
+  async function handleReset() {
+    if (!confirm('Reset dashboard? This clears all scored appointments and calibration adjustments.')) return
+    setResetting(true)
+    try {
+      await resetDashboard()
+      load()
+    } catch (e) {
+      alert('Reset failed.')
+    } finally {
+      setResetting(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -65,7 +82,7 @@ export function Dashboard() {
   if (totalScored === 0) {
     return (
       <div>
-        <h2 className="text-xl font-medium mb-4">Dashboard</h2>
+        <DashboardHeader onReset={handleReset} resetting={resetting} hasData={false} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <StatCard label="Total scored" value="0" />
           <StatCard label="Average risk" value="—" />
@@ -80,7 +97,7 @@ export function Dashboard() {
 
   return (
     <div>
-      <h2 className="text-xl font-medium mb-4">Dashboard</h2>
+      <DashboardHeader onReset={handleReset} resetting={resetting} hasData />
 
       {/* Top stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -196,6 +213,22 @@ export function Dashboard() {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+function DashboardHeader({ onReset, resetting, hasData }: { onReset: () => void; resetting: boolean; hasData: boolean }) {
+  return (
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-xl font-medium">Dashboard</h2>
+      <button
+        type="button"
+        onClick={onReset}
+        disabled={resetting || !hasData}
+        className="text-xs px-3 py-1.5 rounded border border-white/20 text-text-secondary hover:text-text-primary hover:border-white/40 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+      >
+        {resetting ? 'Resetting…' : 'Reset'}
+      </button>
     </div>
   )
 }

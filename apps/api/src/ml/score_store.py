@@ -123,3 +123,9 @@ def calibration_stats() -> dict:
 
 def count() -> int:
     return len(_store)
+
+
+def clear() -> int:
+    n = len(_store)
+    _store.clear()
+    return n

@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from ..ml import score_store
+from ..ml.calibrate import reset_adjustments
 from ..ml.insights import aggregate_scores, generate_insights
 
 router = APIRouter()
@@ -39,3 +40,14 @@ async def get_insights():
 async def get_aggregates():
     """Raw aggregates without LLM analysis (for dashboards)."""
     return AggregatesResponse(aggregates=aggregate_scores())
+
+
+class ResetResponse(BaseModel):
+    cleared: int
+
+
+@router.post("/reset", response_model=ResetResponse)
+async def reset_dashboard():
+    n = score_store.clear()
+    reset_adjustments()
+    return ResetResponse(cleared=n)

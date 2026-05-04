@@ -42,6 +42,11 @@ def get_adjustments() -> dict[str, float]:
     return dict(_weight_adjustments)
 
 
+def reset_adjustments() -> None:
+    for k in FEATURE_WEIGHTS:
+        _weight_adjustments[k] = 1.0
+
+
 def get_effective_weights() -> dict[str, float]:
     """Base weights * adjustments = what the scorer should use."""
     return {

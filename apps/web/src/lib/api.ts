@@ -145,3 +145,9 @@ export async function fetchMetrics(): Promise<{
   if (!res.ok) throw new Error(`Metrics failed: ${res.status}`)
   return res.json()
 }
+
+export async function resetDashboard(): Promise<{ cleared: number }> {
+  const res = await fetch(`${BASE}/api/insights/reset`, { method: 'POST' })
+  if (!res.ok) throw new Error(`Reset failed: ${res.status}`)
+  return res.json()
+}
