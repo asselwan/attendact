@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 
 const navItems = [
-  { to: '/score', label: 'Demo' },
+  { to: '/', label: 'Demo', end: true },
   { to: '/manual', label: 'Manual' },
   { to: '/bulk', label: 'Bulk' },
   { to: '/dashboard', label: 'Dashboard' },
@@ -22,6 +22,7 @@ export function Layout() {
             <NavLink
               key={item.to}
               to={item.to}
+              end={item.end}
               className={({ isActive }) =>
                 `px-3 py-1.5 rounded text-sm transition-colors ${
                   isActive
