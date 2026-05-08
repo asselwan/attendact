@@ -97,6 +97,13 @@ export function Demo() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-10">
+      <div className="brand-hero">
+        <video className="brand-video" autoPlay muted playsInline loop preload="metadata"
+               poster="https://umodapwphcxtiijizqll.supabase.co/storage/v1/object/public/surface-videos/noshight-v3.jpg"
+               aria-label="Noshight product video">
+          <source src="https://umodapwphcxtiijizqll.supabase.co/storage/v1/object/public/surface-videos/noshight-v3.mp4" type="video/mp4" />
+        </video>
+      </div>
       <header className="space-y-2">
         <h1 className="text-3xl font-medium tracking-tight">See no shows before they happen</h1>
         <p className="text-text-secondary text-base">
