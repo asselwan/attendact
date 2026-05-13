@@ -53,6 +53,12 @@ if STATIC_DIR.is_dir():
 
     @app.get("/{path:path}")
     async def serve_spa(path: str):
+        # Root path serves the public Surface marketing landing; the React SPA
+        # lives at /app and every deep route still falls through to index.html.
+        if path == "":
+            landing = STATIC_DIR / "landing.html"
+            if landing.is_file():
+                return FileResponse(landing)
         file_path = STATIC_DIR / path
         if file_path.is_file():
             return FileResponse(file_path)
