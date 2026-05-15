@@ -17,6 +17,7 @@ createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Demo />} />
+          <Route path="/app" element={<Navigate to="/dashboard" replace />} />
           <Route path="/score" element={<Navigate to="/" replace />} />
           <Route path="/manual" element={<AccessGate><ScoreOne /></AccessGate>} />
           <Route path="/bulk" element={<AccessGate><ScoreBulk /></AccessGate>} />
